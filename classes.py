@@ -24,19 +24,27 @@ class Maze:
         wall = pygame.image.load('./ressource/structures.png').convert_alpha()
         end = pygame.image.load('./ressource/Gardien.png').convert_alpha()
         #Define where start picture's blit
+        sprite = wall.get_size()
         x=0
         y=0
-        #window_size = window.
         for row in self.structure:
             for column in row:
                 if column == 'm':
                     window.blit(wall, [x, y])
-                x+=32
-                #if x >= 600:
+                x+=sprite
+                #When the loop read one line, reboot x position
                 if x >= window.get_size()[0]:
                     x=0
-                    y+=32
+                    y+=sprite
             
+class Character:
+    #Character initialisation
+    def __init__(self):
+        self.position = [1, 1]
+
+    def move_character():
+
+
 
 
 #### Zone de debug ###
