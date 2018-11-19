@@ -21,8 +21,8 @@ class Maze:
 
 
     def display_lvl(self, window):
-        wall = pygame.image.load('./ressource/structures.png').convert()
-        end = pygame.image.load('./ressource/Gardien.png').convert()
+        wall = pygame.image.load('./ressource/structures.png').convert_alpha()
+        end = pygame.image.load('./ressource/Gardien.png').convert_alpha()
         #Define where start picture's blit
         x=0
         y=0
@@ -30,7 +30,7 @@ class Maze:
         for row in self.structure:
             for column in row:
                 if column == 'm':
-                    window.blit(wall, (x, y))
+                    window.blit(wall, [x, y])
                 y += 43
             x+= 32
 
@@ -47,6 +47,8 @@ maze.display_lvl(window)
 #BOUCLE INFINIE
 continuer = 1
 while continuer:
-	for event in pygame.event.get():	#Attente des événements
-		if event.type == pygame.QUIT:
-			continuer = 0
+    pygame.display.update()
+    for event in pygame.event.get():	#Attente des événements
+        if event.type == pygame.QUIT:
+            continuer = 0
+
