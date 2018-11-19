@@ -26,13 +26,17 @@ class Maze:
         #Define where start picture's blit
         x=0
         y=0
-
+        #window_size = window.
         for row in self.structure:
             for column in row:
                 if column == 'm':
                     window.blit(wall, [x, y])
-                y += 43
-            x+= 32
+                x+=32
+                #if x >= 600:
+                if x >= window.get_size()[0]:
+                    x=0
+                    y+=32
+            
 
 
 #### Zone de debug ###
@@ -51,4 +55,3 @@ while continuer:
     for event in pygame.event.get():	#Attente des événements
         if event.type == pygame.QUIT:
             continuer = 0
-
