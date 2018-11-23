@@ -23,13 +23,5 @@ maze.structure_construction()
 x=0
 y=0
 
-for i in maze.structure:
-    for c in i :
-        if c == 'm':
-            print('')
-        x+=1
-        print(x)
-    if x >=15 :
-        x=0
-        y+=1
-        print(y)
+i = [2+3, 4]
+print(i)
