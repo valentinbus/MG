@@ -1,5 +1,5 @@
 import pygame
-from constante import *
+from constants import *
 
 class Maze:
     #Define file use to create lvl structure
