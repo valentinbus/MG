@@ -1,4 +1,5 @@
 import pygame
+from constante import *
 
 class Maze:
     #Define file use to create lvl structure
@@ -20,17 +21,19 @@ class Maze:
                 self.structure.append(row_structure)
 
 
-    def display_lvl(self, window):
-        wall = pygame.image.load('./ressource/structures.png').convert_alpha()
-        start = pygame.image.load('./ressource/personnages.png')
-        texture = pygame.image.load('/Users/valentinbus/Documents/repo/MG/ressource/texture.png')
-        end = pygame.image.load('./ressource/Gardien.png').convert_alpha()
+    def display_lvl(self, window, wall_pic, end_pic, texture_pic):
 
         #Define where start picture's blit
-        sprite = wall.get_size()[0]
+        wall = pygame.image.load(wall_pic).convert_alpha()
+        end = pygame.image.load(end_pic).convert_alpha()
+        texture = pygame.image.load(texture_pic).convert_alpha()
+        sprite = SPRITE_SIZE
+        len_line = NB_SPRITE
+        #Define where start picture's blit
         x=0
         y=0
-        len_line = 15*32 
+        len_line = LEN_LINE
+
         for row in self.structure:
             for column in row:
                 if column == 'm':
@@ -45,88 +48,97 @@ class Maze:
                     x=0
                     y+=sprite
 
+    def test_next_position(self, next_position):
+        if next_position[0] < STRUCTURE_SIZE[0] and next_position[1] < STRUCTURE_SIZE[1]:
+            if next_position[0] >= 0 and next_position[1] >= 0:
+                #print(self.structure[next_position[1]][next_position[0]])
+                if self.structure[next_position[1]][next_position[0]] != 'm':
+                    return True
+
             
-class Character:
-    #Character initialisation
-    def __init__(self, file, maze):
-        self.file = file
+class Charac:
+    def __init__(self, charac_pic, texture_pic, maze, window):
         self.position = [0, 0]
+        self.charac = pygame.image.load(charac_pic).convert_alpha()
+        self.texture = pygame.image.load(texture_pic).convert_alpha()
+        self.maze = maze 
 
-    def init_in_maze(self, window):
-        self.charac = pygame.image.load(self.file).convert_alpha()
-        window.blit(self.charac, self.position)
+    def blit(self, past_position):
+        #Determine pixel position for blit picture
+        x_pix = self.position[0]*SPRITE_SIZE
+        y_pix = self.position[1]*SPRITE_SIZE
+        past_position = [i*SPRITE_SIZE for i in past_position]
 
-    def move(self, move):
-        texture = pygame.image.load('/Users/valentinbus/Documents/repo/MG/ressource/texture.png')
-        if move == 'down':
-            print(self.position)
-            print(maze.structure[self.position[1]][self.position[0]])
-            self.position = [self.position[0], self.position[1]+1]
-            if maze.structure[self.position[1]][self.position[0]] != 'm':
-                window.blit(self.charac, [self.position[0]*32, self.position[1]*32])
-                window.blit(texture, [self.position[0]*32, (self.position[1]-1)*32])
-            else :
-                self.position = [self.position[0], self.position[1]-1]
-            
-        elif move == 'up':
-            print(self.position)
-            print(maze.structure[self.position[1]][self.position[0]])
-            self.position = [self.position[0], self.position[1]-1]
-            if maze.structure[self.position[1]][self.position[0]] != 'm':
-                window.blit(self.charac, [self.position[0]*32, self.position[1]*32])
-                window.blit(texture, [self.position[0]*32, (self.position[1]+1)*32])
-            else :
-                self.position = [self.position[0], self.position[1]+1]
+        window.blit(self.texture, past_position)
+        window.blit(self.charac, [x_pix, y_pix])
+        pygame.display.update()
 
-        elif move == 'right':
-            print(self.position)
-            print(maze.structure[self.position[1]][self.position[0]])
-            self.position = [self.position[0]+1, self.position[1]]
-            if maze.structure[self.position[1]][self.position[0]] != 'm':
-                window.blit(self.charac, [self.position[0]*32, self.position[1]*32])
-                window.blit(texture, [(self.position[0]-1)*32, self.position[1]*32])
-            else :
-                self.position = [self.position[0]-1, self.position[1]]
+    def move(self, direction):
+        self.x = self.position[0]
+        self.y = self.position[1]
 
-        elif move == 'left':
-            print(self.position)
-            print(maze.structure[self.position[1]][self.position[0]])
-            self.position = [self.position[0]-1, self.position[1]]
-            if maze.structure[self.position[1]][self.position[0]] != 'm':
-                window.blit(self.charac, [self.position[0]*32, self.position[1]*32])
-                window.blit(texture, [(self.position[0]+1)*32, self.position[1]*32])
-            else :
-                self.position = [self.position[0]+1, self.position[1]]
+        if direction == 'right':
+            next_position = [self.x + 1, self.y]
+            if maze.test_next_position(next_position) == True:
+                past_position = self.position #Determine previous position to replace blit by texture
+                self.position = next_position #Determine new position to blit charac_pic
+                self.blit(past_position)
+        
+        elif direction == 'left':
+            next_position = [self.x - 1, self.y]
+            if maze.test_next_position(next_position) == True:
+                past_position = self.position #Determine previous position to replace blit by texture
+                self.position = next_position #Determine new position to blit charac_pic
+                self.blit(past_position)        
 
-#### Zone de debug ###
+        elif direction == 'up':
+            next_position = [self.x, self.y - 1]
+            if maze.test_next_position(next_position) == True:
+                past_position = self.position #Determine previous position to replace blit by texture
+                self.position = next_position #Determine new position to blit charac_pic
+                self.blit(past_position)
 
-#Initialisation of the maze
+        elif direction == 'down':
+            next_position = [self.x, self.y + 1]
+            if maze.test_next_position(next_position) == True:
+                past_position = self.position #Determine previous position to replace blit by texture
+                self.position = next_position #Determine new position to blit charac_pic
+                self.blit(past_position)
+
+
+
+#########
+#TESTING#
+#########
+
+#INIT MAZE
 pygame.init()
-
-maze = Maze('./ressource/maze_structure')
+window = pygame.display.set_mode((WINDOW_SIZE, WINDOW_SIZE))
+maze = Maze(MAZE_STRUCTURE)
 maze.structure_construction()
-window = pygame.display.set_mode((15*32, 15*32))
-background = pygame.image.load('./ressource/background.jpeg')
-window.blit(background, [0, 0])
-maze.display_lvl(window)
+maze.display_lvl(window, WALL, END, TEXTURE)
 
-#Initialisation charac personnage:
-mc_gyver = Character('./ressource/mc_gyver.png', maze)
-mc_gyver.init_in_maze(window)
+#INIT CHARAC
+mac_gyver = Charac(MAC_GYVER, TEXTURE, maze, window)
+mac_gyver.blit(mac_gyver.position)
 
-#Starting Game Loop
+
 continuer = 1
 while continuer:
     pygame.display.update()
-    for event in pygame.event.get():	#Attente des événements
+    for event in pygame.event.get():
+        #Waiting for events
         if event.type == pygame.QUIT:
             continuer = 0
-        elif event.type == pygame.KEYUP:
-            mc_gyver.move('up')
-        elif event.type == pygame.KEYDOWN:
-            mc_gyver.move('down')
-        elif event.type == pygame.K_RIGHT:
-            mc_gyver.move('right')
-        elif event.type == pygame.K_LEFT:
-            mc_gyver.move('left')    
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_RIGHT:
+                mac_gyver.move('right')  
+            elif event.key == pygame.K_LEFT:
+                mac_gyver.move('left')
+            elif event.key == pygame.K_UP:
+                mac_gyver.move('up')
+            elif event.key == pygame.K_DOWN:
+                mac_gyver.move('down')
+            print(event.key)
+            print(mac_gyver.position)
     pygame.display.flip()
