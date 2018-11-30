@@ -1,4 +1,5 @@
 import pygame
+import random
 from constants import *
 
 class Maze:
@@ -105,6 +106,55 @@ class Charac:
                 self.position = next_position #Determine new position to blit charac_pic
                 self.blit(past_position)
 
+class Object():
+    def __init__(self, syringe_pic, ether_pic, needle_pic, maze, window):
+        self.syringe = pygame.image.load(syringe_pic).convert_alpha()
+        self.ether = pygame.image.load(ether_pic).convert_alpha()
+        self.needle = pygame.image.load(needle_pic).convert_alpha() 
+        
+    def generate_random_position(self):
+        searching = True
+        self.x = 0
+        self.y = 0
+
+        while searching:
+            self.position = []
+            self.x = random.randrange(0, 14, 1)
+            self.y = random.randrange(0, 14, 1)
+
+            print('X ===> ', self.x)
+            print('Y ===> ', self.y)
+            print('carac ===> ', maze.structure[self.x][self.y])
+            
+            if maze.structure[self.y][self.x] == '0' :
+                self.position.extend([self.x, self.y])
+                searching = False
+        print('random position ===>', self.position)
+        return self.position
+
+    def display_object(self):
+        self.ether_position = []
+        self.syringe_position = []
+        self.needle_position = []
+
+        while self.ether_position == self.syringe_position or self.ether_position == self.needle_position \
+        or self.syringe_position == self.needle_position:
+            self.ether_position = self.generate_random_position()
+            self.syringe_position = self.generate_random_position()
+            self.needle_position = self.generate_random_position()
+
+            print('ether position in method display_object ==> ', self.ether_position)
+            print('syringe position in method display_object ==> ', self.syringe_position)
+            print('needle position in method display_object ==> ', self.needle_position)
+
+            self.ether_position_pix = [i*SPRITE_SIZE for i in self.ether_position]
+            self.syringe_position_pix = [i*SPRITE_SIZE for i in self.syringe_position]
+            self.needle_position_pix = [i*SPRITE_SIZE for i in self.needle_position]
+
+            window.blit(self.ether, self.ether_position_pix)
+            window.blit(self.syringe, self.syringe_position_pix)
+            window.blit(self.needle, self.needle_position_pix)
+
 
 
 #########
@@ -122,14 +172,18 @@ maze.display_lvl(window, WALL, END, TEXTURE)
 mac_gyver = Charac(MAC_GYVER, TEXTURE, maze, window)
 mac_gyver.blit(mac_gyver.position)
 
+#INIT OBJECTS 
+objects = Object(SYRINGE, ETHER, NEEDLE, maze, window)
+objects.generate_random_position()
+objects.display_object()
 
-continuer = 1
+continuer = True
 while continuer:
     pygame.display.update()
     for event in pygame.event.get():
         #Waiting for events
         if event.type == pygame.QUIT:
-            continuer = 0
+            continuer = False
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_RIGHT:
                 mac_gyver.move('right')  
