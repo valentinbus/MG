@@ -58,20 +58,26 @@ class Maze:
                 if self.structure[next_position[1]][next_position[0]] != "m":
                     return True
 
-    def end_game(self, charac, objects):
-        print('dans end game ==>', objects.objects_collected)
-        if charac.position == [14, 14] and objects.objects_collected == 3:
-            print('GAGNÉ')
+    def end_game(self, charac):
+        if charac.position == [14, 14]:
             return False
-        elif charac.position == [14, 14] and objects.objects_collected != 3:
-            print('PERDU')
-            return False
-        else :
+        else:
             return True
+    
+    def response(self, charac, objects):
+        print("dans end game ==>", objects.objects_collected)
+        if charac.position == [14, 14] and objects.objects_collected == 3:
+            print("GAGNÉ")
+            return True
+        elif charac.position == [14, 14] and objects.objects_collected != 3:
+            print("PERDU")
+            return False
+
 
 
 # class Menu:
 #     def __init__()
+
 
 class Charac:
     def __init__(self, charac_pic, texture_pic, maze, window):
@@ -79,6 +85,7 @@ class Charac:
         self.charac = pygame.image.load(charac_pic).convert_alpha()
         self.texture = pygame.image.load(texture_pic).convert_alpha()
         self.maze = maze
+        self.window = window
 
     def blit(self, past_position):
         # Determine pixel position for blit picture
@@ -86,13 +93,14 @@ class Charac:
         y_pix = self.position[1] * SPRITE_SIZE
         past_position = [i * SPRITE_SIZE for i in past_position]
 
-        window.blit(self.texture, past_position)
-        window.blit(self.charac, [x_pix, y_pix])
+        self.window.blit(self.texture, past_position)
+        self.window.blit(self.charac, [x_pix, y_pix])
         pygame.display.update()
 
     def move(self, direction):
         self.x = self.position[0]
         self.y = self.position[1]
+        maze = self.maze
 
         if direction == "right":
             next_position = [self.x + 1, self.y]
@@ -148,6 +156,8 @@ class Object:
         self.j = 0
         self.k = 0
         self.objects_collected = 0
+        self.maze = maze
+        self.window = window
 
     def generate_random_position(self):
         searching = True
@@ -162,9 +172,9 @@ class Object:
 
             print("X ===> ", self.x)
             print("Y ===> ", self.y)
-            print("carac ===> ", maze.structure[self.x][self.y])
+            print("carac ===> ", self.maze.structure[self.x][self.y])
 
-            if maze.structure[self.y][self.x] == "0":
+            if self.maze.structure[self.y][self.x] == "0":
                 self.position.extend([self.x, self.y])
                 searching = False
         print("random position ===>", self.position)
@@ -194,12 +204,12 @@ class Object:
             self.syringe_position_pix = [i * SPRITE_SIZE for i in self.syringe_position]
             self.needle_position_pix = [i * SPRITE_SIZE for i in self.needle_position]
 
-            window.blit(self.ether, self.ether_position_pix)
-            window.blit(self.syringe, self.syringe_position_pix)
-            window.blit(self.needle, self.needle_position_pix)
+            self.window.blit(self.ether, self.ether_position_pix)
+            self.window.blit(self.syringe, self.syringe_position_pix)
+            self.window.blit(self.needle, self.needle_position_pix)
 
     def collecting_objects(self, charac):
-        #Count number of objects collected
+        # Count number of objects collected
         if charac.position == self.ether_position:
             self.i = 1
         elif charac.position == self.syringe_position:
@@ -212,61 +222,29 @@ class Object:
 
         print(self.objects_collected)
         return self.objects_collected
-    
-    def display_object_collected(self, objects_collected, one_pic, two_pic, three_pic, wall_pic):
-        self.one = pygame.image.load(one_pic).convert_alpha()
-        self.two = pygame.image.load(two_pic).convert_alpha()
-        self.three = pygame.image.load(three_pic).convert_alpha()
-        self.wall = pygame.image.load(wall_pic).convert_alpha()
+
+    def display_object_collected(
+        self, objects_collected, one_pic, two_pic, three_pic, wall_pic
+    ):
+        one = pygame.image.load(one_pic).convert_alpha()
+        two = pygame.image.load(two_pic).convert_alpha()
+        three = pygame.image.load(three_pic).convert_alpha()
+        wall = pygame.image.load(wall_pic).convert_alpha()
         position_objects_pix = [i * SPRITE_SIZE for i in [14, 0]]
+        window = self.window
 
         if objects_collected == 1:
-            window.blit(self.one, position_objects_pix)
+            window.blit(one, position_objects_pix)
         elif objects_collected == 2:
-            window.blit(self.wall, position_objects_pix)
-            window.blit(self.two, position_objects_pix)
+            window.blit(wall, position_objects_pix)
+            window.blit(two, position_objects_pix)
         elif objects_collected == 3:
-            window.blit(self.wall, position_objects_pix)
-            window.blit(self.three, position_objects_pix)
+            window.blit(wall, position_objects_pix)
+            window.blit(three, position_objects_pix)
 
-#########
-# TESTING#
-#########
-
-# INIT MAZE
-pygame.init()
-window = pygame.display.set_mode((WINDOW_SIZE, WINDOW_SIZE))
-maze = Maze(MAZE_STRUCTURE)
-maze.structure_construction()
-maze.display_lvl(window, WALL, END, TEXTURE)
-
-# INIT CHARAC
-mac_gyver = Charac(MAC_GYVER, TEXTURE, maze, window)
-mac_gyver.blit(mac_gyver.position)
-
-# INIT OBJECTS
-objects = Object(SYRINGE, ETHER, NEEDLE, maze, window)
-objects.generate_random_position()
-objects.display_object()
-
-
-continuer = True
-while continuer:
-    pygame.display.update()
-    for event in pygame.event.get():
-        # Waiting for events
-        if event.type == pygame.QUIT:
-            continuer = False
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_RIGHT:
-                mac_gyver.move("right")
-            elif event.key == pygame.K_LEFT:
-                mac_gyver.move("left")
-            elif event.key == pygame.K_UP:
-                mac_gyver.move("up")
-            elif event.key == pygame.K_DOWN:
-                mac_gyver.move("down")
-            objects.collecting_objects(mac_gyver)
-            continuer = maze.end_game(mac_gyver, objects)
-            print(mac_gyver.position)
-    pygame.display.flip()
+class Menu:
+    def __init__(self, menu_pic, window):
+        self.menu = pygame.image.load(menu_pic).convert_alpha()
+        self.window = window
+        self.window.blit(self.menu, ((0, 0)))
+        

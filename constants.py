@@ -6,6 +6,7 @@ WINDOW_SIZE = NB_SPRITE * SPRITE_SIZE
 STRUCTURE_SIZE = (15, 15)
 
 #IMAGE
+MENU = './ressource/menu.png'
 ONE = './ressource/1.png'
 TWO = './ressource/2.png'
 THREE = './ressource/3.png'
