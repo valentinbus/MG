@@ -242,9 +242,109 @@ class Object:
             window.blit(wall, position_objects_pix)
             window.blit(three, position_objects_pix)
 
-class Menu:
-    def __init__(self, menu_pic, window):
-        self.menu = pygame.image.load(menu_pic).convert_alpha()
+# class Menu:
+#     def __init__(self, menu_pic, window):
+#         self.menu = pygame.image.load(menu_pic).convert_alpha()
+#         self.window = window
+#         self.window.blit(self.menu, ((0, 0)))
+
+class Play:
+    def __init__(self, window):
         self.window = window
+
+    def init(self):
+        self.maze = Maze(MAZE_STRUCTURE)
+        self.mac_gyver = Charac(MAC_GYVER, TEXTURE, self.maze, self.window)
+        self.mac_gyver.position = [0, 0]
+        self.objects = Object(SYRINGE, ETHER, NEEDLE, self.maze, self.window)
+
+        # INIT MAZE
+        self.maze.structure_construction()
+        self.maze.display_lvl(self.window, WALL, END, TEXTURE)
+
+        # INIT CHARAC
+        self.mac_gyver.blit(self.mac_gyver.position)
+
+        # INIT OBJECTS
+        self.objects.generate_random_position()
+        self.objects.display_object()
+        self.objects.objects_collected = 0
+
+        #RUN PROGRAM
+        self.run = True
+
+    def menu(self, menu_pic):
+        self.menu = pygame.image.load(menu_pic).convert_alpha()
         self.window.blit(self.menu, ((0, 0)))
+
+        continuer = True
+        while continuer:
+            pygame.display.update()
+            for event in pygame.event.get():
+                # Waiting for events
+                if event.type == pygame.QUIT:
+                    continuer = False
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_c:
+                        continuer = False 
+            
+    def play(self):
+        continuer = True
+        while continuer:
+            pygame.display.update()
+            for event in pygame.event.get():
+                # Waiting for events
+                if event.type == pygame.QUIT:
+                    continuer = False
+                    self.run = False
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_RIGHT:
+                        self.mac_gyver.move("right")
+                    elif event.key == pygame.K_LEFT:
+                        self.mac_gyver.move("left")
+                    elif event.key == pygame.K_UP:
+                        self.mac_gyver.move("up")
+                    elif event.key == pygame.K_DOWN:
+                        self.mac_gyver.move("down")
+                    self.objects.collecting_objects(self.mac_gyver)
+                    continuer = self.maze.end_game(self.mac_gyver)
+                    self.response = self.maze.response(self.mac_gyver, self.objects)
+                    print('response ==>', self.response)
+                    print(self.mac_gyver.position)
+            pygame.display.flip()
+        return self.response
         
+
+    def end_game1(self, end_game1_pic):
+        self.end_game1_pic = pygame.image.load(end_game1_pic).convert_alpha()
+        self.window.blit(self.end_game1_pic, ((0, 0)))
+
+        continuer = True
+        while continuer:
+            pygame.display.update()
+            for event in pygame.event.get():
+                # Waiting for events
+                if event.type == pygame.QUIT:
+                    continuer = False
+                    self.run = False
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_c:
+                        continuer = False 
+                        return True
+    
+    def end_game2(self, end_game2_pic):
+        self.end_game2_pic = pygame.image.load(end_game2_pic).convert_alpha()
+        self.window.blit(self.end_game2_pic, ((0, 0)))
+
+        continuer = True
+        while continuer:
+            pygame.display.update()
+            for event in pygame.event.get():
+                # Waiting for events
+                if event.type == pygame.QUIT:
+                    continuer = False
+                    self.run = False
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_c:
+                        continuer = False 
+                        return True

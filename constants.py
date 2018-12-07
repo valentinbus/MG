@@ -7,6 +7,8 @@ STRUCTURE_SIZE = (15, 15)
 
 #IMAGE
 MENU = './ressource/menu.png'
+END_GAME1 = './ressource/end_game1.png'
+END_GAME2 = './ressource/end_game2.png'
 ONE = './ressource/1.png'
 TWO = './ressource/2.png'
 THREE = './ressource/3.png'
