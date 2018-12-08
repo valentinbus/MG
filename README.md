@@ -2,6 +2,7 @@
 Little Game P3
 
 Git clone 'https://github.com/valentinbus/MG.git'
+pip install -r ./requirements.txt
 
 Run the game : py game.py
 

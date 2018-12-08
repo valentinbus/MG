@@ -8,8 +8,8 @@ def main():
 
     play = Play(window)
 
-    play.menu(MENU)
-
+    menu = play.menu(MENU)
+    continu = True
     run = True
     while run:
         play.init() 
@@ -18,9 +18,9 @@ def main():
             play.end_game1(END_GAME1)
         elif launch == False:
             play.end_game2(END_GAME2)
+        else : 
+            continu = False
         run = play.run
 
 if __name__ == "__main__":
     main()
-
-
