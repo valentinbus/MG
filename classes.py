@@ -63,20 +63,15 @@ class Maze:
             return False
         else:
             return True
-    
+
     def response(self, charac, objects):
-        #print("dans end game ==>", objects.objects_collected)
+
         if charac.position == [14, 14] and objects.objects_collected == 3:
-            #print("GAGNÉ")
+
             return True
         elif charac.position == [14, 14] and objects.objects_collected != 3:
-            #print("PERDU")
+
             return False
-
-
-
-# class Menu:
-#     def __init__()
 
 
 class Charac:
@@ -170,14 +165,10 @@ class Object:
             self.x = random.randrange(0, 14, 1)
             self.y = random.randrange(0, 14, 1)
 
-            #print("X ===> ", self.x)
-            #print("Y ===> ", self.y)
-            #print("carac ===> ", self.maze.structure[self.x][self.y])
-
             if self.maze.structure[self.y][self.x] == "0":
                 self.position.extend([self.x, self.y])
                 searching = False
-        #print("random position ===>", self.position)
+
         return self.position
 
     def display_object(self):
@@ -193,12 +184,6 @@ class Object:
             self.ether_position = self.generate_random_position()
             self.syringe_position = self.generate_random_position()
             self.needle_position = self.generate_random_position()
-
-            #print("ether position in method display_object ==> ", self.ether_position)
-            #print(
-            #    "syringe position in method display_object ==> ", self.syringe_position
-            #)
-            #print("needle position in method display_object ==> ", self.needle_position)
 
             self.ether_position_pix = [i * SPRITE_SIZE for i in self.ether_position]
             self.syringe_position_pix = [i * SPRITE_SIZE for i in self.syringe_position]
@@ -220,7 +205,6 @@ class Object:
         self.objects_collected = self.i + self.j + self.k
         self.display_object_collected(self.objects_collected, ONE, TWO, THREE, WALL)
 
-        #print(self.objects_collected)
         return self.objects_collected
 
     def display_object_collected(
@@ -265,7 +249,7 @@ class Play:
         self.objects.display_object()
         self.objects.objects_collected = 0
 
-        #RUN PROGRAM
+        # RUN PROGRAM
         self.run = True
         self.response = None
 
@@ -273,27 +257,27 @@ class Play:
         self.menu = pygame.image.load(menu_pic).convert_alpha()
         self.window.blit(self.menu, ((0, 0)))
 
-        continuer = True
-        while continuer:
+        continu = True
+        while continu:
             pygame.display.update()
             for event in pygame.event.get():
                 # Waiting for events
                 if event.type == pygame.QUIT:
-                    continuer = False
+                    continu = False
                     return False
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_c:
-                        continuer = False 
+                        continu = False
                         return True
-            
+
     def play(self):
-        continuer = True
-        while continuer:
+        continu = True
+        while continu:
             pygame.display.update()
             for event in pygame.event.get():
                 # Waiting for events
                 if event.type == pygame.QUIT:
-                    continuer = False
+                    continu = False
                     self.run = False
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_RIGHT:
@@ -305,44 +289,42 @@ class Play:
                     elif event.key == pygame.K_DOWN:
                         self.mac_gyver.move("down")
                     self.objects.collecting_objects(self.mac_gyver)
-                    continuer = self.maze.end_game(self.mac_gyver)
+                    continu = self.maze.end_game(self.mac_gyver)
                     self.response = self.maze.response(self.mac_gyver, self.objects)
-                    print('response ==>', self.response)
-                    #print(self.mac_gyver.position)
+
             pygame.display.flip()
         return self.response
-        
 
     def end_game1(self, end_game1_pic):
         self.end_game1_pic = pygame.image.load(end_game1_pic).convert_alpha()
         self.window.blit(self.end_game1_pic, ((0, 0)))
 
-        continuer = True
-        while continuer:
+        continu = True
+        while continu:
             pygame.display.update()
             for event in pygame.event.get():
                 # Waiting for events
                 if event.type == pygame.QUIT:
-                    continuer = False
+                    continu = False
                     self.run = False
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_c:
-                        continuer = False 
+                        continu = False
                         return True
-    
+
     def end_game2(self, end_game2_pic):
         self.end_game2_pic = pygame.image.load(end_game2_pic).convert_alpha()
         self.window.blit(self.end_game2_pic, ((0, 0)))
 
-        continuer = True
-        while continuer:
+        continu = True
+        while continu:
             pygame.display.update()
             for event in pygame.event.get():
                 # Waiting for events
                 if event.type == pygame.QUIT:
-                    continuer = False
+                    continu = False
                     self.run = False
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_c:
-                        continuer = False 
+                        continu = False
                         return True
