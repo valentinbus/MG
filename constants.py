@@ -1,11 +1,11 @@
-#SIZE PARAMETER
+'''SIZE PARAMETER'''
 NB_SPRITE = 15
 SPRITE_SIZE = 32
 LEN_LINE = NB_SPRITE * SPRITE_SIZE
 WINDOW_SIZE = NB_SPRITE * SPRITE_SIZE
 STRUCTURE_SIZE = (15, 15)
 
-#IMAGE
+'''IMAGE'''
 MENU = './ressource/menu.png'
 END_GAME1 = './ressource/end_game1.png'
 END_GAME2 = './ressource/end_game2.png'
@@ -22,5 +22,5 @@ ETHER = './ressource/ether.png'
 SYRINGE = './ressource/seringue.png'
 NEEDLE = './ressource/items.png'
 
-#MAZE STRUCTURE 
+'''MAZE STRUCTURE'''
 MAZE_STRUCTURE = './ressource/maze_structure'
