@@ -158,7 +158,7 @@ class Object:
         searching = True
         self.x = 0
         self.y = 0
-        self.inventory = {"ether": (), "syringe": (), "needle": ()}
+        
 
         while searching:
             self.position = []
