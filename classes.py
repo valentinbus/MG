@@ -1,16 +1,22 @@
-import pygame
 import random
-from constants import NB_SPRITE, SPRITE_SIZE, LEN_LINE, WINDOW_SIZE, STRUCTURE_SIZE, MENU, END_GAME1, END_GAME2, ONE, TWO, THREE, START, END, WALL, TEXTURE, BACKGROUND, MAC_GYVER, ETHER, SYRINGE, NEEDLE, MAZE_STRUCTURE
+
+import pygame
+
+from constants import (BACKGROUND, END, END_GAME1, END_GAME2, ETHER, LEN_LINE,
+                       MAC_GYVER, MAZE_STRUCTURE, MENU, NB_SPRITE, NEEDLE, ONE,
+                       SPRITE_SIZE, START, STRUCTURE_SIZE, SYRINGE, TEXTURE,
+                       THREE, TWO, WALL, WINDOW_SIZE)
 
 
 class Maze:
-    # Define file use to create lvl structure
+    '''Use to create level'''
     def __init__(self, file):
+        ''' Define file use to create lvl structure '''
         self.file = file
         self.structure = []
 
-    # Parse file to create structure
     def structure_construction(self):
+        ''' Parse file to create structure '''
         with open(self.file, "r") as file:
             # Define total rows
             for row in file:
@@ -23,6 +29,7 @@ class Maze:
                 self.structure.append(row_structure)
 
     def display_lvl(self, window, wall_pic, end_pic, texture_pic):
+        '''Map picture to position'''
 
         # Define where start picture's blit
         wall = pygame.image.load(wall_pic).convert_alpha()
@@ -45,11 +52,13 @@ class Maze:
                     window.blit(texture, [x, y])
                 x += sprite
                 # When the loop arrived at the end of line, reboot x position
-                if x >= len_line:  # 15 is the number of sprite in a line of the maze
+                # 15 is the number of sprite in a line of the maze
+                if x >= len_line:
                     x = 0
                     y += sprite
 
     def test_next_position(self, next_position):
+        '''Test if player postion is available '''
         if (
             next_position[0] < STRUCTURE_SIZE[0]
             and next_position[1] < STRUCTURE_SIZE[1]
@@ -59,13 +68,14 @@ class Maze:
                     return True
 
     def end_game(self, charac):
+        '''Terminate game when player is in the end position'''
         if charac.position == [14, 14]:
             return False
         else:
             return True
 
     def response(self, charac, objects):
-
+        '''Check if the player win or loose party'''
         if charac.position == [14, 14] and objects.objects_collected == 3:
 
             return True
@@ -75,6 +85,7 @@ class Maze:
 
 
 class Charac:
+    '''This class concern player's chararc'''
     def __init__(self, charac_pic, texture_pic, maze, window):
         self.position = [0, 0]
         self.charac = pygame.image.load(charac_pic).convert_alpha()
@@ -83,7 +94,7 @@ class Charac:
         self.window = window
 
     def blit(self, past_position):
-        # Determine pixel position for blit picture
+        ''' Determine pixel position for blit picture '''
         x_pix = self.position[0] * SPRITE_SIZE
         y_pix = self.position[1] * SPRITE_SIZE
         past_position = [i * SPRITE_SIZE for i in past_position]
@@ -93,6 +104,7 @@ class Charac:
         pygame.display.update()
 
     def move(self, direction):
+        '''Translate input to move character '''
         self.x = self.position[0]
         self.y = self.position[1]
         maze = self.maze
@@ -143,6 +155,7 @@ class Charac:
 
 
 class Object:
+    '''Instance all items in the game'''
     def __init__(self, syringe_pic, ether_pic, needle_pic, maze, window):
         self.syringe = pygame.image.load(syringe_pic).convert_alpha()
         self.ether = pygame.image.load(ether_pic).convert_alpha()
@@ -155,6 +168,7 @@ class Object:
         self.window = window
 
     def generate_random_position(self):
+        '''Use to create random position'''
         searching = True
         self.x = 0
         self.y = 0
@@ -171,6 +185,8 @@ class Object:
         return self.position
 
     def display_object(self):
+        '''Use genereate_random_position()
+        to attribute boject's position and display picture'''
         self.ether_position = []
         self.syringe_position = []
         self.needle_position = []
@@ -184,16 +200,19 @@ class Object:
             self.syringe_position = self.generate_random_position()
             self.needle_position = self.generate_random_position()
 
-            self.ether_position_pix = [i * SPRITE_SIZE for i in self.ether_position]
-            self.syringe_position_pix = [i * SPRITE_SIZE for i in self.syringe_position]
-            self.needle_position_pix = [i * SPRITE_SIZE for i in self.needle_position]
+            self.ether_position_pix = [
+                i * SPRITE_SIZE for i in self.ether_position]
+            self.syringe_position_pix = [
+                i * SPRITE_SIZE for i in self.syringe_position]
+            self.needle_position_pix = [
+                i * SPRITE_SIZE for i in self.needle_position]
 
             self.window.blit(self.ether, self.ether_position_pix)
             self.window.blit(self.syringe, self.syringe_position_pix)
             self.window.blit(self.needle, self.needle_position_pix)
 
     def collecting_objects(self, charac):
-        # Count number of objects collected
+        '''Count number of objects collected'''
         if charac.position == self.ether_position:
             self.i = 1
         elif charac.position == self.syringe_position:
@@ -202,13 +221,15 @@ class Object:
             self.k = 1
 
         self.objects_collected = self.i + self.j + self.k
-        self.display_object_collected(self.objects_collected, ONE, TWO, THREE, WALL)
+        self.display_object_collected(
+            self.objects_collected, ONE, TWO, THREE, WALL)
 
         return self.objects_collected
 
     def display_object_collected(
         self, objects_collected, one_pic, two_pic, three_pic, wall_pic
     ):
+        '''Display counter of collected objects'''
         one = pygame.image.load(one_pic).convert_alpha()
         two = pygame.image.load(two_pic).convert_alpha()
         three = pygame.image.load(three_pic).convert_alpha()
@@ -227,10 +248,12 @@ class Object:
 
 
 class Play:
+    '''Manage all event of the party'''
     def __init__(self, window):
         self.window = window
 
     def init(self):
+        '''Initialise new objects when call'''
         self.maze = Maze(MAZE_STRUCTURE)
         self.mac_gyver = Charac(MAC_GYVER, TEXTURE, self.maze, self.window)
         self.mac_gyver.position = [0, 0]
@@ -253,6 +276,7 @@ class Play:
         self.response = None
 
     def menu(self, menu_pic):
+        '''Display introduction menu'''
         self.menu = pygame.image.load(menu_pic).convert_alpha()
         self.window.blit(self.menu, ((0, 0)))
 
@@ -270,6 +294,7 @@ class Play:
                         return True
 
     def play(self):
+        '''Manage all input player's input'''
         continu = True
         while continu:
             pygame.display.update()
@@ -289,12 +314,14 @@ class Play:
                         self.mac_gyver.move("down")
                     self.objects.collecting_objects(self.mac_gyver)
                     continu = self.maze.end_game(self.mac_gyver)
-                    self.response = self.maze.response(self.mac_gyver, self.objects)
+                    self.response = self.maze.response(
+                        self.mac_gyver, self.objects)
 
             pygame.display.flip()
         return self.response
 
     def end_game1(self, end_game1_pic):
+        '''Display Win Screen at the end of the game'''
         self.end_game1_pic = pygame.image.load(end_game1_pic).convert_alpha()
         self.window.blit(self.end_game1_pic, ((0, 0)))
 
@@ -312,6 +339,7 @@ class Play:
                         return True
 
     def end_game2(self, end_game2_pic):
+        '''Display Loose Screen at the end of the game'''
         self.end_game2_pic = pygame.image.load(end_game2_pic).convert_alpha()
         self.window.blit(self.end_game2_pic, ((0, 0)))
 
