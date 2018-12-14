@@ -1,6 +1,6 @@
 import pygame
 import random
-from constants import *
+from constants import NB_SPRITE, SPRITE_SIZE, LEN_LINE, WINDOW_SIZE, STRUCTURE_SIZE, MENU, END_GAME1, END_GAME2, ONE, TWO, THREE, START, END, WALL, TEXTURE, BACKGROUND, MAC_GYVER, ETHER, SYRINGE, NEEDLE, MAZE_STRUCTURE
 
 
 class Maze:
@@ -158,7 +158,6 @@ class Object:
         searching = True
         self.x = 0
         self.y = 0
-        
 
         while searching:
             self.position = []
